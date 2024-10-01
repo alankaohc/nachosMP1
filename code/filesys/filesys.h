@@ -46,6 +46,7 @@ typedef int OpenFileId;
 class FileSystem {
    public:
     FileSystem() {
+        fid = -1;
         for (int i = 0; i < 20; i++) OpenFileTable[i] = NULL;
     }
 
@@ -67,7 +68,10 @@ class FileSystem {
 
     //  The OpenAFile function is used for kernel open system call
     OpenFileId OpenAFile(char *name) {
-        return 5;
+        OpenFile* openFileObj = Open(name);
+        OpenFileTable[++fid] = openFileObj;
+
+        return fid;
         
     }
     /*
@@ -82,6 +86,7 @@ class FileSystem {
     bool Remove(char *name) { return Unlink(name) == 0; }
 
     OpenFile *OpenFileTable[20];
+    OpenFileId fid;
 };
 
 #else  // FILESYS
