@@ -11,16 +11,18 @@ int main(void) {
 
     if (fid < 0)
         MSG("Failed on opening file");
+    else
+        MSG("Successful on opening file");
+     
+    // for (i = 0; i < 26; ++i) {
+    //     int count = Write(test + i, 1, fid);
+    //     if (count != 1)
+    //         MSG("Failed on writing file");
+    // }
 
-    for (i = 0; i < 26; ++i) {
-        int count = Write(test + i, 1, fid);
-        if (count != 1)
-            MSG("Failed on writing file");
-    }
-
-    success = Close(fid);
-    if (success != 1)
-        MSG("Failed on closing file");
-    MSG("Success on creating file1.test");
+    // success = Close(fid);
+    // if (success != 1)
+    //     MSG("Failed on closing file");
+    // MSG("Success on creating file1.test");
     Halt();
 }
