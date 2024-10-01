@@ -81,9 +81,12 @@ class FileSystem {
     /*
         int ReadFile(char *buffer, int size, OpenFileId id){
         }
-        int CloseFile(OpenFileId id){
-        }
     */
+    int CloseFile(OpenFileId id){
+        OpenFileTable[fid--] = NULL;
+        return TRUE;
+    }
+    
 
     bool Remove(char *name) { return Unlink(name) == 0; }
 

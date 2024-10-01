@@ -147,6 +147,23 @@ void ExceptionHandler(ExceptionType which) {
                     return;
                     ASSERTNOTREACHED();
                     break;
+                case SC_Close:
+                    DEBUG(dbgSys, "SC_Close\n");
+                    
+                    {
+                        val = kernel->machine->ReadRegister(4);
+                        int fid = val;
+                        status = SysClose(fid);
+                        kernel->machine->WriteRegister(2, status);
+
+                    }
+                    
+                    kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+                    kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
+                    kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
+                    return;
+                    ASSERTNOTREACHED();
+                    break;
                 case SC_Add:
                     DEBUG(dbgSys, "Add " << kernel->machine->ReadRegister(4) << " + " << kernel->machine->ReadRegister(5) << "\n");
                     /* Process SysAdd Systemcall*/

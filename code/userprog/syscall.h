@@ -28,7 +28,7 @@
 // #define SC_Read	7
 #define SC_Write	8
 #define SC_Seek 9
-// #define SC_Close	10
+#define SC_Close	10
 #define SC_ThreadFork 11
 #define SC_ThreadYield 12
 #define SC_ExecV 13
