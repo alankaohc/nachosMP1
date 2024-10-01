@@ -66,8 +66,11 @@ class FileSystem {
     }
 
     //  The OpenAFile function is used for kernel open system call
-    /*  OpenFileId OpenAFile(char *name) {
-        }
+    OpenFileId OpenAFile(char *name) {
+        return 5;
+        
+    }
+    /*
         int WriteFile(char *buffer, int size, OpenFileId id){
         }
         int ReadFile(char *buffer, int size, OpenFileId id){

@@ -7,13 +7,14 @@ int main(void) {
     int i;
     if (success != 1)
         MSG("Failed on creating file");
-    Open("file1.test");
-    MSG("Successful on openning file");
-    // if (fid < 0)
-    //     MSG("Failed on opening file");
-    // else
-    //     MSG("Successful on opening file!!");
-   
+    fid = Open("file1.test");
+    if (fid < 0)
+        MSG("Failed on opening file");
+    else {
+        MSG("Successful on opening file!!");
+        PrintInt(fid);
+    }
+        
     
     // for (i = 0; i < 26; ++i) {
     //     int count = Write(test + i, 1, fid);
