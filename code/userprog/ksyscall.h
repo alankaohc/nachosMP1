@@ -51,5 +51,10 @@ int SysClose(int fid)
 {
     return kernel->fileSystem->CloseFile(fid);
 }
+int SysRead(char *chAddr, int size, int fid)
+{
+    return kernel->fileSystem->ReadFile(chAddr, size, fid);
+}
+
 
 #endif /* ! __USERPROG_KSYSCALL_H__ */

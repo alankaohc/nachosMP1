@@ -78,15 +78,17 @@ class FileSystem {
         
         return openFileObj->Write(buffer, size);
     }
-    /*
-        int ReadFile(char *buffer, int size, OpenFileId id){
-        }
-    */
+    
+    int ReadFile(char *buffer, int size, OpenFileId id){
+        OpenFile* openFileObj = OpenFileTable[fid];
+
+        return openFileObj->Read(buffer, size);
+    }
+    
     int CloseFile(OpenFileId id){
         OpenFileTable[fid--] = NULL;
         return TRUE;
     }
-    
 
     bool Remove(char *name) { return Unlink(name) == 0; }
 

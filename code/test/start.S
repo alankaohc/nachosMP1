@@ -138,6 +138,14 @@ Close:
 	j	$31
 	.end Close
 
+	.globl Read
+	.ent	Read
+Read:
+	addiu $2,$0,SC_Read
+	syscall
+	j	$31
+	.end Read
+
 	.globl Remove
 	.ent	Remove
 Remove:
