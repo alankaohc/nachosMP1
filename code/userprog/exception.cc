@@ -58,6 +58,8 @@ void ExceptionHandler(ExceptionType which) {
         case SyscallException:
             switch (type) {
                 case SC_Halt:
+                    cout << "halt\n"; 
+                    DEBUG(dbgSys, "SC_Halt\n");
                     DEBUG(dbgSys, "Shutdown, initiated by user program.\n");
                     SysHalt();
                     cout << "in exception\n";
@@ -83,7 +85,11 @@ void ExceptionHandler(ExceptionType which) {
                         char *msg = &(kernel->machine->mainMemory[val]);
                         cout << msg << endl;
                     }
-                    SysHalt();
+                    //SysHalt();
+                    kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+                    kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
+                    kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
+                    return;
                     ASSERTNOTREACHED();
                     break;
                 case SC_Create:
