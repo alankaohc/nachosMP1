@@ -39,7 +39,12 @@ int SysCreate(char *filename) {
 
 OpenFileId SysOpen(char *name)
 {
-        return kernel->fileSystem->OpenAFile(name);
+    return kernel->fileSystem->OpenAFile(name);
+}
+
+int SysWrite(char *chAddr, int size, int fid)
+{
+    return kernel->fileSystem->WriteFile(chAddr, size, fid);
 }
 
 #endif /* ! __USERPROG_KSYSCALL_H__ */

@@ -122,6 +122,31 @@ void ExceptionHandler(ExceptionType which) {
                     return;
                     ASSERTNOTREACHED();
                     break;
+                case SC_Write:
+                    DEBUG(dbgSys, "SC_Write\n");
+                    
+                    {
+                        val = kernel->machine->ReadRegister(4);
+                        char* chAddr = &(kernel->machine->mainMemory[val]);
+                        val = kernel->machine->ReadRegister(5);
+                        int size = val;
+                        val = kernel->machine->ReadRegister(6);
+                        int fid = val;
+                        
+                        //cout << "chAddr: " << chAddr << endl;
+                        //cout << "size: " << size << endl;
+                        //cout << "fid: " << fid << endl;
+                        numChar = SysWrite(chAddr, size, fid);
+                        kernel->machine->WriteRegister(2, numChar);
+                        
+                    }
+                    
+                    kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+                    kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
+                    kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
+                    return;
+                    ASSERTNOTREACHED();
+                    break;
                 case SC_Add:
                     DEBUG(dbgSys, "Add " << kernel->machine->ReadRegister(4) << " + " << kernel->machine->ReadRegister(5) << "\n");
                     /* Process SysAdd Systemcall*/

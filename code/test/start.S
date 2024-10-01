@@ -122,6 +122,14 @@ Open:
 	j	$31
 	.end Open
 
+	.globl Write
+	.ent	Write
+Write:
+	addiu $2,$0,SC_Write
+	syscall
+	j	$31
+	.end Write
+
 	.globl Remove
 	.ent	Remove
 Remove:

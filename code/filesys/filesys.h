@@ -70,13 +70,15 @@ class FileSystem {
     OpenFileId OpenAFile(char *name) {
         OpenFile* openFileObj = Open(name);
         OpenFileTable[++fid] = openFileObj;
-
         return fid;
+    }
+    
+    int WriteFile(char *buffer, int size, OpenFileId id){
+        OpenFile* openFileObj = OpenFileTable[fid];
         
+        return openFileObj->Write(buffer, size);
     }
     /*
-        int WriteFile(char *buffer, int size, OpenFileId id){
-        }
         int ReadFile(char *buffer, int size, OpenFileId id){
         }
         int CloseFile(OpenFileId id){
