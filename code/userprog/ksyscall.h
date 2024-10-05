@@ -42,18 +42,18 @@ OpenFileId SysOpen(char *name)
     return kernel->fileSystem->OpenAFile(name);
 }
 
-int SysWrite(char *chAddr, int size, int fid)
+int SysWrite(char *buffer, int size, int fid)
 {
-    return kernel->fileSystem->WriteFile(chAddr, size, fid);
+    return kernel->fileSystem->WriteFile(buffer, size, fid);
 }
 
 int SysClose(int fid)
 {
     return kernel->fileSystem->CloseFile(fid);
 }
-int SysRead(char *chAddr, int size, int fid)
+int SysRead(char *buffer, int size, int fid)
 {
-    return kernel->fileSystem->ReadFile(chAddr, size, fid);
+    return kernel->fileSystem->ReadFile(buffer, size, fid);
 }
 
 

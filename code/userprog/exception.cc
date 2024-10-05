@@ -58,7 +58,6 @@ void ExceptionHandler(ExceptionType which) {
         case SyscallException:
             switch (type) {
                 case SC_Halt:
-                    cout << "halt\n"; 
                     DEBUG(dbgSys, "SC_Halt\n");
                     DEBUG(dbgSys, "Shutdown, initiated by user program.\n");
                     SysHalt();
@@ -71,7 +70,6 @@ void ExceptionHandler(ExceptionType which) {
                     DEBUG(dbgTraCode, "In ExceptionHandler(), into SysPrintInt, " << kernel->stats->totalTicks);
                     SysPrintInt(val);
                     DEBUG(dbgTraCode, "In ExceptionHandler(), return from SysPrintInt, " << kernel->stats->totalTicks);
-                    // Set Program Counter
                     kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
                     kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
                     kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
@@ -85,7 +83,6 @@ void ExceptionHandler(ExceptionType which) {
                         char *msg = &(kernel->machine->mainMemory[val]);
                         cout << msg << endl;
                     }
-                    //SysHalt();
                     kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
                     kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
                     kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
@@ -97,7 +94,6 @@ void ExceptionHandler(ExceptionType which) {
                     val = kernel->machine->ReadRegister(4);
                     {
                         char *filename = &(kernel->machine->mainMemory[val]);
-                        // cout << filename << endl;
                         status = SysCreate(filename);
                         kernel->machine->WriteRegister(2, (int)status);
                     }
@@ -127,16 +123,12 @@ void ExceptionHandler(ExceptionType which) {
                     
                     {
                         val = kernel->machine->ReadRegister(4);
-                        char* chAddr = &(kernel->machine->mainMemory[val]);
+                        char* buffer = &(kernel->machine->mainMemory[val]);
                         val = kernel->machine->ReadRegister(5);
                         int size = val;
                         val = kernel->machine->ReadRegister(6);
                         int fid = val;
-                        
-                        //cout << "chAddr: " << chAddr << endl;
-                        //cout << "size: " << size << endl;
-                        //cout << "fid: " << fid << endl;
-                        numChar = SysWrite(chAddr, size, fid);
+                        numChar = SysWrite(buffer, size, fid);
                         kernel->machine->WriteRegister(2, numChar);
                         
                     }
@@ -149,12 +141,11 @@ void ExceptionHandler(ExceptionType which) {
                     break;
                 case SC_Close:
                     DEBUG(dbgSys, "SC_Close\n");
-                    
                     {
                         val = kernel->machine->ReadRegister(4);
                         int fid = val;
                         status = SysClose(fid);
-                        kernel->machine->WriteRegister(2, status);
+                        kernel->machine->WriteRegister(2, (int)status);
 
                     }
                     
@@ -165,24 +156,20 @@ void ExceptionHandler(ExceptionType which) {
                     ASSERTNOTREACHED();
                     break;
                 case SC_Read:
-                    DEBUG(dbgSys, "SC_Write\n");
+                    DEBUG(dbgSys, "SC_Read\n");
                     
                     {
                         val = kernel->machine->ReadRegister(4);
-                        char* chAddr = &(kernel->machine->mainMemory[val]);
+                        char* buffer = &(kernel->machine->mainMemory[val]);
                         val = kernel->machine->ReadRegister(5);
                         int size = val;
                         val = kernel->machine->ReadRegister(6);
                         int fid = val;
                         
-                        //cout << "chAddr: " << chAddr << endl;
-                        //cout << "size: " << size << endl;
-                        //cout << "fid: " << fid << endl;
-                        numChar = SysRead(chAddr, size, fid);
+                        numChar = SysRead(buffer, size, fid);
                         kernel->machine->WriteRegister(2, numChar);
                         
                     }
-                    
                     kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
                     kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
                     kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);

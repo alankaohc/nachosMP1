@@ -46,7 +46,6 @@ typedef int OpenFileId;
 class FileSystem {
    public:
     FileSystem() {
-        fid = -1;
         for (int i = 0; i < 20; i++) OpenFileTable[i] = NULL;
     }
 
@@ -69,31 +68,41 @@ class FileSystem {
     //  The OpenAFile function is used for kernel open system call
     OpenFileId OpenAFile(char *name) {
         OpenFile* openFileObj = Open(name);
-        OpenFileTable[++fid] = openFileObj;
-        return fid;
+        for (int id=0; id<20; id++) {
+            if (OpenFileTable[id] == NULL) {
+                OpenFileTable[id] = openFileObj;
+                return id;
+            }
+        }
+        return -1;
+        
     }
     
     int WriteFile(char *buffer, int size, OpenFileId id){
-        OpenFile* openFileObj = OpenFileTable[fid];
-        
-        return openFileObj->Write(buffer, size);
+        OpenFile* openFileObj = OpenFileTable[id];
+        int numChar = openFileObj->Write(buffer, size);
+
+        return numChar;
     }
     
     int ReadFile(char *buffer, int size, OpenFileId id){
-        OpenFile* openFileObj = OpenFileTable[fid];
+        OpenFile* openFileObj = OpenFileTable[id];
+        int numChar = openFileObj->Read(buffer, size);
 
-        return openFileObj->Read(buffer, size);
+        return numChar;
     }
     
-    int CloseFile(OpenFileId id){
-        OpenFileTable[fid--] = NULL;
-        return TRUE;
+    bool CloseFile(OpenFileId id){
+        OpenFile* openFileObj = OpenFileTable[id];
+        openFileObj->~OpenFile();
+        OpenFileTable[id] = NULL;
+        if (OpenFileTable[id] == NULL) { return true; }
+        return false;
     }
 
     bool Remove(char *name) { return Unlink(name) == 0; }
 
     OpenFile *OpenFileTable[20];
-    OpenFileId fid;
 };
 
 #else  // FILESYS
