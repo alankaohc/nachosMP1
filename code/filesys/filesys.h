@@ -64,40 +64,39 @@ class FileSystem {
             return NULL;
         return new OpenFile(fileDescriptor);
     }
-
     //  The OpenAFile function is used for kernel open system call
     OpenFileId OpenAFile(char *name) {
         OpenFile* openFileObj = Open(name);
+        if (openFileObj == NULL) return -1; // 找不到檔案
         for (int id=0; id<20; id++) {
             if (OpenFileTable[id] == NULL) {
                 OpenFileTable[id] = openFileObj;
-                return id;
+                return id; // 成功開啟
             }
         }
-        return -1;
+        return -1; // OpenFileTable已滿
         
     }
-    
     int WriteFile(char *buffer, int size, OpenFileId id){
         OpenFile* openFileObj = OpenFileTable[id];
+        if (openFileObj == NULL) return -1; // 找不到檔案
         int numChar = openFileObj->Write(buffer, size);
 
         return numChar;
     }
-    
     int ReadFile(char *buffer, int size, OpenFileId id){
         OpenFile* openFileObj = OpenFileTable[id];
+        if (openFileObj == NULL) return -1; // 找不到檔案
         int numChar = openFileObj->Read(buffer, size);
 
         return numChar;
     }
-    
-    bool CloseFile(OpenFileId id){
+    int CloseFile(OpenFileId id){
         OpenFile* openFileObj = OpenFileTable[id];
-        openFileObj->~OpenFile();
+        if (openFileObj == NULL) return -1; // 找不到檔案
+        delete openFileObj;  // 刪除open時new出來的物件
         OpenFileTable[id] = NULL;
-        if (OpenFileTable[id] == NULL) { return true; }
-        return false;
+        return 1;
     }
 
     bool Remove(char *name) { return Unlink(name) == 0; }
