@@ -47,6 +47,8 @@ class FileSystem {
    public:
     FileSystem() {
         for (int i = 0; i < 20; i++) OpenFileTable[i] = NULL;
+        for (int i = 0; i < 20; i++) OpenFileNameTable[i] = NULL;
+        
     }
 
     bool Create(char *name) {
@@ -66,11 +68,18 @@ class FileSystem {
     }
     //  The OpenAFile function is used for kernel open system call
     OpenFileId OpenAFile(char *name) {
+        // 處理檔名重複
+        for (int i=0; i<20; i++) {
+            if ( OpenFileNameTable[i] && strcmp(OpenFileNameTable[i], name) == 0 ) {
+                return -1;
+            }
+        }
         OpenFile* openFileObj = Open(name);
         if (openFileObj == NULL) return -1; // 找不到檔案
         for (int id=0; id<20; id++) {
             if (OpenFileTable[id] == NULL) {
-                OpenFileTable[id] = openFileObj;
+                OpenFileTable[id] = openFileObj; 
+                OpenFileNameTable[id] = name;    // 紀錄檔名
                 return id; // 成功開啟
             }
         }
@@ -78,6 +87,7 @@ class FileSystem {
         
     }
     int WriteFile(char *buffer, int size, OpenFileId id){
+        if (id < 0 || id >= 20) return -1; // 錯誤的id 
         OpenFile* openFileObj = OpenFileTable[id];
         if (openFileObj == NULL) return -1; // 找不到檔案
         int numChar = openFileObj->Write(buffer, size);
@@ -85,6 +95,7 @@ class FileSystem {
         return numChar;
     }
     int ReadFile(char *buffer, int size, OpenFileId id){
+        if (id < 0 || id >= 20) return -1; // 錯誤的id 
         OpenFile* openFileObj = OpenFileTable[id];
         if (openFileObj == NULL) return -1; // 找不到檔案
         int numChar = openFileObj->Read(buffer, size);
@@ -92,16 +103,19 @@ class FileSystem {
         return numChar;
     }
     int CloseFile(OpenFileId id){
+        if (id < 0 || id >= 20) return -1; // 錯誤的id 
         OpenFile* openFileObj = OpenFileTable[id];
         if (openFileObj == NULL) return -1; // 找不到檔案
         delete openFileObj;  // 刪除open時new出來的物件
         OpenFileTable[id] = NULL;
+        OpenFileNameTable[id] == NULL;
         return 1;
     }
 
     bool Remove(char *name) { return Unlink(name) == 0; }
 
     OpenFile *OpenFileTable[20];
+    char *OpenFileNameTable[20]; 
 };
 
 #else  // FILESYS
