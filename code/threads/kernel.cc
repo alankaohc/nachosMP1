@@ -108,6 +108,12 @@ void Kernel::Initialize() {
     synchConsoleIn = new SynchConsoleInput(consoleIn);     // input from stdin
     synchConsoleOut = new SynchConsoleOutput(consoleOut);  // output to stdout
     synchDisk = new SynchDisk();                           //
+    
+                          
+    usedPhysPages[NumPhysPages] = {0};
+    numFreePhysPages = NumPhysPages;
+    
+
 #ifdef FILESYS_STUB
     fileSystem = new FileSystem();
 #else
@@ -245,8 +251,9 @@ void Kernel::NetworkTest() {
 }
 
 void ForkExecute(Thread *t) {
+    
     if (!t->space->Load(t->getName())) {
-        return;  // executable not found
+        return;   // executable not found
     }
 
     t->space->Execute(t->getName());
@@ -256,6 +263,7 @@ void Kernel::ExecAll() {
     for (int i = 1; i <= execfileNum; i++) {
         int a = Exec(execfile[i]);
     }
+    //cout << "\n\nexecAll\n\n";
     currentThread->Finish();
     // Kernel::Exec();
 }
@@ -263,7 +271,7 @@ void Kernel::ExecAll() {
 int Kernel::Exec(char *name) {
     t[threadNum] = new Thread(name, threadNum);
     t[threadNum]->setIsExec();
-    t[threadNum]->space = new AddrSpace();
+    t[threadNum]->space = new AddrSpace(usedPhysPages, &numFreePhysPages);
     t[threadNum]->Fork((VoidFunctionPtr)&ForkExecute, (void *)t[threadNum]);
     threadNum++;
 

@@ -52,6 +52,8 @@ class Kernel {
     int ReadFile(char *buffer, int size, OpenFileId id);   // fileSystem call
     int CloseFile(OpenFileId id);                          // fileSystem call
 
+   
+
     // These are public for notational convenience; really,
     // they're global variables used everywhere.
 
@@ -71,6 +73,9 @@ class Kernel {
     int execRunningNum;  // number of running threads
 
     int hostName;  // machine identifier
+
+    int usedPhysPages[NumPhysPages];
+    unsigned int numFreePhysPages;
 
    private:
     Thread *t[10];

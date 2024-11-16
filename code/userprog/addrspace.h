@@ -22,9 +22,12 @@
 class AddrSpace {
    public:
     AddrSpace();   // Create an address space.
+    AddrSpace(int* _usedPhysPages, unsigned int* _numFreePhysPages);   // Create an address space.
     ~AddrSpace();  // De-allocate an address space
+    
 
-    bool Load(char *fileName);  // Load a program into addr space from
+
+    int Load(char *fileName);  // Load a program into addr space from
                                 // a file
                                 // return false if not found
 
@@ -45,7 +48,8 @@ class AddrSpace {
                                   // for now!
     unsigned int numPages;        // Number of pages in the virtual
                                   // address space
-
+    int* usedPhysPages;
+    unsigned int* numFreePhysPages;
     void InitRegisters();  // Initialize user-level CPU registers,
                            // before jumping to user code
 };
